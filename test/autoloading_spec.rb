@@ -24,7 +24,7 @@ describe Autoloading do
       end
     FILE
 
-    $: << test_file_root.to_s
+    $: << temp_file_root.to_s
     require 'hello'
     Hello::Kitty
   end
