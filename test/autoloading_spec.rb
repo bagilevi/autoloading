@@ -46,5 +46,23 @@ describe Autoloading do
     require 'zoo'
     Zoo::Kitty
   end
+
+  it "can autoload without namespacing - array" do
+    create_test_file "space.rb", <<-FILE
+      module Space
+        extend Autoloading
+        autoload_without_namespacing %w(planets asteroids)
+      end
+    FILE
+
+    create_test_file "space/planets/saturn.rb", <<-FILE
+      module Space::Saturn
+      end
+    FILE
+
+    $: << temp_file_root.to_s
+    require 'space'
+    Space::Saturn
+  end
 end
 

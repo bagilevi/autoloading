@@ -36,6 +36,6 @@ module Autoloading
 
   def autoload_without_namespacing(*dirnames)
     @autoload_without_namespacing ||= []
-    @autoload_without_namespacing.concat(dirnames)
+    @autoload_without_namespacing.concat(Array(dirnames).flatten)
   end
 end
