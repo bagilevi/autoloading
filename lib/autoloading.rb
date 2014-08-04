@@ -5,8 +5,22 @@ module Autoloading
     prefix = underscore(self.name.to_s)
     filename = underscore(cname.to_s)
     path = "#{prefix}/#{filename}"
-    require path
-    const_get(cname)
+    begin
+      require path
+      return const_get(cname)
+    rescue LoadError
+      tried_requires = [path]
+      (@autoload_without_namespacing || []).each do |dirname|
+        path = "#{prefix}/#{dirname}/#{filename}"
+        tried_requires << path
+        begin
+          require path
+          return const_get(cname)
+        rescue LoadError
+        end
+      end
+      raise LoadError, "cannot load such file -- #{tried_requires.join(', ')}"
+    end
   end
 
   # Based on ActiveSupport, removed inflections.
@@ -18,5 +32,10 @@ module Autoloading
     word.tr!("-", "_")
     word.downcase!
     word
+  end
+
+  def autoload_without_namespacing(*dirnames)
+    @autoload_without_namespacing ||= []
+    @autoload_without_namespacing.concat(dirnames)
   end
 end
