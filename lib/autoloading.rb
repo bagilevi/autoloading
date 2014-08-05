@@ -19,7 +19,7 @@ module Autoloading
         rescue LoadError
         end
       end
-      raise LoadError, "cannot load such file -- #{tried_requires.join(', ')}"
+      super
     end
   end
 
